@@ -52,7 +52,9 @@ def getNeighbourAdress(ipRouter, lastRouter = None):   #explora routers adjacent
     session = Session(hostname=ipRouter, community=COMMUNITY, version=2)
     name = (session.get('SNMPv2-MIB::sysName.0'))
 
-    router = Router(name.value)
+    router = network.getRouter(name.value)
+    if router is None:
+        router = Router(name.value)
     if lastRouter is not None:
         lastRouter.addAdjacentRouter(router)
 
@@ -81,8 +83,8 @@ def generateGraph():
 
     for x in network.getRouters():
         for y in x.getAdjacents():
-            print ipsSameNetwork(x,y)
-            g1.edge(str(x),str(y))
+            head,tail = ipsSameNetwork(x,y)
+            g1.edge(str(x),str(y), headlabel = head, taillabel = tail)
 
 
 
@@ -92,7 +94,8 @@ def generateGraph():
 def ipsSameNetwork(r1,r2):
     #router1 = network.getRouter(r1)
     #router2 = network.getRouter(r2)
-    print r1.getInterfaces()
+    #print r1.getInterfaces()
+    print ("testing",r1, r1.getInterfaces(),r2,  r2.getInterfaces())
 
     for x in r1.getInterfaces():
         ip1 = str(x.getIP())
@@ -109,4 +112,4 @@ if __name__ == "__main__":
     main()
     getNeighbourAdress(firstRouterIP)
     generateGraph()
-    #network.printRouters()
+    network.printRouters()

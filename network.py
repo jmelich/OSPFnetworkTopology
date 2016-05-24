@@ -25,6 +25,7 @@ class Network():
         for x in self.routers:
             if x.getName() == name:
                 return x
+        return None
 
     def getRouterByPos(self,pos):
         return self.routers[0]

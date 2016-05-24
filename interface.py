@@ -7,13 +7,13 @@ class Interface:
         self.cost=0
 
     def __str__(self):
-        return self.name
+        return self.ipAddress
 
     def __repr__(self):
-        return self.name
+        return self.ipAddress
 
     def getIP(self):
         return self.ipAddress
-        
+
     def getMask(self):
         return self.netmask
