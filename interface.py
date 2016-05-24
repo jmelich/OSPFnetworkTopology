@@ -1,9 +1,9 @@
 class Interface:
-    def __init__(self,name):
-        self.name=""
-        self.ipAddress=""
-        self.netmask=""
-        self.speed = 0
+    def __init__(self,name,ipAddress,netmask,speed):#falta el cost
+        self.name=name
+        self.ipAddress=ipAddress
+        self.netmask=netmask
+        self.speed = speed
         self.cost=0
 
     def __str__(self):
@@ -11,3 +11,9 @@ class Interface:
 
     def __repr__(self):
         return self.name
+
+    def getIP(self):
+        return self.ipAddress
+        
+    def getMask(self):
+        return self.netmask

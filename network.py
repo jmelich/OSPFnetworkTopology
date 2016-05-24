@@ -17,4 +17,17 @@ class Network():
 
     def printRouters(self):
         for x in self.routers:
-            print x
+            print 'ROUTER',x, 'adjacents:'
+            for y in x.getAdjacents():
+                print y
+
+    def getRouter(self,name):
+        for x in self.routers:
+            if x.getName() == name:
+                return x
+
+    def getRouterByPos(self,pos):
+        return self.routers[0]
+
+    def getRouters(self):
+        return self.routers
