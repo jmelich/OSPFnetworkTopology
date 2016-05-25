@@ -116,7 +116,7 @@ def findBestRoutes():
     #allIP[1] es nom del router a qui pertany
     #allIP[2] es la mascara de la ip
 
-    for ipstart, ipend in itertools.combinations(allIP, 2):
+    for ipstart, ipend in itertools.permutations(allIP, 2):
 
         router = network.getRouter(ipstart[1])
         nexthop = router.getNexthop(ipend[0],ipend[2])
