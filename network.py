@@ -40,6 +40,11 @@ class Network():
         value=[ip,mask,router]
         self.allIPs.append(value)
 
+    def getRouterbyIP(self,ip):
+        for x in self.allIPs:
+            if x[0] == ip:
+                return self.getRouter(x[1])
+
     def getRouterByPos(self, pos):
         return self.routers[0]
 

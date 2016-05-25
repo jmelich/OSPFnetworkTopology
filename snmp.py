@@ -112,20 +112,25 @@ def ipsSameNetwork(r1, r2):
 def findBestRoutes():
 
     allIP = network.getIPs()
+    #allIP[0] es IP
+    #allIP[1] es nom del router a qui pertany
+    #allIP[2] es la mascara de la ip
 
-    for router in network.getRouters():
-        for interface in router.getInterfaces():
-            ip1 = interface.getIP()
-            mask1 = interface.getMask()
-            for ip in allIP:
-                if ip[0] != ip1 and ip[1] !=router.getName():
-                    #print ip[0], ip[1], ip[2]
-                    nexthopIP = router.getNexthop(ip[0],ip[2]) #ip[2] es la mascara
-                    #print ip1, ip[0], nexthopIP
-                    if nexthopIP == '0.0.0.0':
-                        print ip1, '--->', ip[0]
-                    else:
-                        print ip1, nexthopIP, ip[0]
+    for ipstart, ipend in itertools.combinations(allIP, 2):
+
+        router = network.getRouter(ipstart[1])
+        nexthop = router.getNexthop(ipend[0],ipend[2])
+        toPrint = ipstart[0]
+        while(True):
+            if(nexthop == '0.0.0.0'):
+                toPrint += '-->' + ipend[0]
+                break
+            else:
+                router = network.getRouterbyIP(nexthop)
+                nexthop = router.getNexthop(ipend[0],ipend[2])
+                toPrint += '-->' + router.getName()
+        print toPrint
+
 
 
 
