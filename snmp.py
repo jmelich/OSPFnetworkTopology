@@ -7,13 +7,15 @@ from router import Router
 from network import Network
 import graphviz as gv
 from netaddr import IPNetwork
+import itertools
+from routeEntry import RouteEntry
 
 firstRouterIP = ""
 COMMUNITY = "rocom"
 network = Network()
 
 
-def getRoutingTable(ipRouter):
+def getRoutingTable(ipRouter,router = None):
     session = Session(hostname=ipRouter, community=COMMUNITY, version=2)
     networks = session.walk('IP-FORWARD-MIB::ipCidrRouteDest')
     nexthop = session.walk('IP-FORWARD-MIB::ipCidrRouteNextHop')
@@ -22,10 +24,13 @@ def getRoutingTable(ipRouter):
 
     print 'RoutingTable: '
     for x, y, z, n in zip(networks, masks, nexthop, tipus):
+        route = RouteEntry(x.value,y.value,z.value)
+        router.addRoute(route)
         print x.value, y.value, z.value, n.value
 
 
 def getRouterInterfaces(ipRouter, routerName=None):
+    global network
     session = Session(hostname=ipRouter, community=COMMUNITY, version=2)
 
     router = network.getRouter(routerName)
@@ -38,9 +43,10 @@ def getRouterInterfaces(ipRouter, routerName=None):
     for x, y, m, s in zip(ifaceNames, ifaceIp, masks, speed):
         interface = Interface(x.value, y.value, m.value, s.value)  # falta el cost
         router.addInterface(interface)
+        network.addIP(y.value, routerName, m.value)
         print x.value, y.value, m.value, s.value
 
-    getRoutingTable(ipRouter)
+    getRoutingTable(ipRouter,router)
     # print location
 
 
@@ -103,9 +109,29 @@ def ipsSameNetwork(r1, r2):
             if IPNetwork(str(ip1 + '/' + mask1)) == IPNetwork(str(ip2 + '/' + mask2)):
                 return (ip1, ip2)
 
+def findBestRoutes():
+
+    allIP = network.getIPs()
+
+    for router in network.getRouters():
+        for interface in router.getInterfaces():
+            ip1 = interface.getIP()
+            mask1 = interface.getMask()
+            for ip in allIP:
+                if ip[0] != ip1 and ip[1] !=router.getName():
+                    #print ip[0], ip[1], ip[2]
+                    nexthopIP = router.getNexthop(ip[0],ip[2]) #ip[2] es la mascara
+                    #print ip1, ip[0], nexthopIP
+                    if nexthopIP == '0.0.0.0':
+                        print ip1, '--->', ip[0]
+                    else:
+                        print ip1, nexthopIP, ip[0]
+
+
 
 if __name__ == "__main__":
     main()
     getNeighbourAdress(firstRouterIP)
     generateGraph()
     network.printRouters()
+    findBestRoutes()
