@@ -9,6 +9,7 @@ import graphviz as gv
 from netaddr import IPNetwork
 import itertools
 from routeEntry import RouteEntry
+from tabulate import tabulate
 
 firstRouterIP = ""
 COMMUNITY = "rocom"
@@ -22,11 +23,19 @@ def getRoutingTable(ipRouter,router = None):
     tipus = session.walk('IP-FORWARD-MIB::ipCidrRouteType')
     masks = session.walk('IP-FORWARD-MIB::ipCidrRouteMask')
 
-    print 'RoutingTable: '
+    table = list()
+
+
     for x, y, z, n in zip(networks, masks, nexthop, tipus):
         route = RouteEntry(x.value,y.value,z.value)
         router.addRoute(route)
-        print x.value, y.value, z.value, n.value
+        #print x.value, y.value, z.value, n.value
+        table.append((x.value, y.value, z.value, n.value))
+
+    print 'RoutingTable: '
+    headers = ["Network", "Mask", "Nexthop", "Type"]
+    print tabulate(table, headers, tablefmt="fancy_grid")
+
 
 
 def getRouterInterfaces(ipRouter, routerName=None):
@@ -35,6 +44,9 @@ def getRouterInterfaces(ipRouter, routerName=None):
 
     router = network.getRouter(routerName)
     ifaceIp = (session.walk('RFC1213-MIB::ipAdEntAddr'))
+
+
+    table = list()
 
     for ip in ifaceIp:
         ifaceIndex = (session.get('RFC1213-MIB::ipAdEntIfIndex.'+ip.value))
@@ -46,11 +58,16 @@ def getRouterInterfaces(ipRouter, routerName=None):
         if ifaceCost == 'NOSUCHINSTANCE':
             ifaceCost = 'N/D'
 
-        print ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost
+        #print ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost
+        table.append((ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost))
+
         interface = Interface(ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost)  # falta el cost
         router.addInterface(interface)
         network.addIP(ip.value, routerName, ifaceMask.value)
 
+    print "Interfaces: "
+    headers = ["Name", "IP", "Mask", "Speed", "Cost"]
+    print tabulate(table, headers, tablefmt="fancy_grid")
     getRoutingTable(ipRouter,router)
 
 
@@ -103,7 +120,7 @@ def ipsSameNetwork(r1, r2):
     # router1 = network.getRouter(r1)
     # router2 = network.getRouter(r2)
     # print r1.getInterfaces()
-    print("testing", r1, r1.getInterfaces(), r2, r2.getInterfaces())
+    #print("testing", r1, r1.getInterfaces(), r2, r2.getInterfaces())
 
     for x in r1.getInterfaces():
         ip1 = str(x.getIP())
@@ -121,6 +138,8 @@ def findBestRoutes():
     #allIP[1] es nom del router a qui pertany
     #allIP[2] es la mascara de la ip
 
+    table = list()
+
     for ipstart, ipend in itertools.permutations(allIP, 2):
 
         router = network.getRouter(ipstart[1])
@@ -134,7 +153,13 @@ def findBestRoutes():
                 router = network.getRouterbyIP(nexthop)
                 nexthop = router.getNexthop(ipend[0],ipend[2])
                 toPrint += '-->' + router.getName()
-        print toPrint
+        table.append((ipstart[0],ipend[0],toPrint))
+
+
+    print "\n\nPATHS: "
+    headers = ["From", "To", "Path"]
+    print tabulate(table, headers, tablefmt="fancy_grid")
+        #print toPrint
 
 
 
@@ -143,5 +168,5 @@ if __name__ == "__main__":
     main()
     getNeighbourAdress(firstRouterIP)
     generateGraph()
-    network.printRouters()
+    #network.printRouters()
     findBestRoutes()
