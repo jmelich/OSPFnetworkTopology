@@ -54,30 +54,6 @@ def getRouterInterfaces(ipRouter, routerName=None):
     getRoutingTable(ipRouter,router)
 
 
-def getRouterInterfaces2(ipRouter, routerName=None):
-    global network
-    session = Session(hostname=ipRouter, community=COMMUNITY, version=2)
-
-    router = network.getRouter(routerName)
-    ifaceNames = (session.walk('IF-MIB::ifDescr'))
-    print "interficies:", ifaceNames
-    #ifaceIp = (session.walk('ipAdEntAddr'))
-    ifaceIp = (session.walk('RFC1213-MIB::ipAdEntAddr'))
-
-    print "ips:", ifaceIp
-    masks = (session.walk('ipAdEntNetMask'))
-    speed = (session.walk('ifSpeed'))
-
-    print 'InterfacesInfo: '
-    for x, y, m, s in zip(ifaceNames, ifaceIp, masks, speed):
-        interface = Interface(x.value, y.value, m.value, s.value)  # falta el cost
-        router.addInterface(interface)
-        network.addIP(y.value, routerName, m.value)
-        print x.value, y.value, m.value, s.value
-
-    getRoutingTable(ipRouter,router)
-    # print location
-
 
 # explora routers adjacents i crida getRouterInterfaces()per mostrar la info de les interficies
 def getNeighbourAdress(ipRouter, lastRouter=None):
