@@ -5,6 +5,10 @@ strict graph {
 		R2 -- R3 [headlabel="10.0.5.6" taillabel="10.0.5.5"]
 		R3 -- R1 [headlabel="10.0.4.5" taillabel="10.0.4.4"]
 		R3 -- R2 [headlabel="10.0.5.5" taillabel="10.0.5.6"]
+		R3 -- R5 [headlabel="10.0.6.5" taillabel="10.0.6.8"]
+		R3 -- R6 [headlabel="10.0.7.5" taillabel="10.0.7.7"]
 		R1 -- R4 [headlabel="10.0.3.4" taillabel="10.0.3.3"]
 		R1 -- R3 [headlabel="10.0.4.4" taillabel="10.0.4.5"]
+		R5 -- R3 [headlabel="10.0.6.8" taillabel="10.0.6.5"]
+		R6 -- R3 [headlabel="10.0.7.7" taillabel="10.0.7.5"]
 }

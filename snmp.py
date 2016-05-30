@@ -34,8 +34,37 @@ def getRouterInterfaces(ipRouter, routerName=None):
     session = Session(hostname=ipRouter, community=COMMUNITY, version=2)
 
     router = network.getRouter(routerName)
-    ifaceNames = (session.walk('ifDescr'))
-    ifaceIp = (session.walk('ipAdEntAddr'))
+    ifaceIp = (session.walk('RFC1213-MIB::ipAdEntAddr'))
+
+    for ip in ifaceIp:
+        ifaceIndex = (session.get('RFC1213-MIB::ipAdEntIfIndex.'+ip.value))
+        ifaceName = (session.get('IF-MIB::ifDescr.'+ ifaceIndex.value))
+        ifaceMask = (session.get('ipAdEntNetMask.'+ ip.value))
+        ifaceSpeed = (session.get('ifSpeed.'+ifaceIndex.value))
+        ifaceCost = (session.get('OSPF-MIB::ospfIfMetricValue.'+ip.value+'.0.0')).value
+
+        if ifaceCost == 'NOSUCHINSTANCE':
+            ifaceCost = 'N/D'
+
+        print ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost
+        interface = Interface(ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost)  # falta el cost
+        router.addInterface(interface)
+        network.addIP(ip.value, routerName, ifaceMask.value)
+
+    getRoutingTable(ipRouter,router)
+
+
+def getRouterInterfaces2(ipRouter, routerName=None):
+    global network
+    session = Session(hostname=ipRouter, community=COMMUNITY, version=2)
+
+    router = network.getRouter(routerName)
+    ifaceNames = (session.walk('IF-MIB::ifDescr'))
+    print "interficies:", ifaceNames
+    #ifaceIp = (session.walk('ipAdEntAddr'))
+    ifaceIp = (session.walk('RFC1213-MIB::ipAdEntAddr'))
+
+    print "ips:", ifaceIp
     masks = (session.walk('ipAdEntNetMask'))
     speed = (session.walk('ifSpeed'))
 
