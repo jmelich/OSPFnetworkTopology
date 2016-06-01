@@ -30,7 +30,17 @@ def getRoutingTable(ipRouter,router = None):
         route = RouteEntry(x.value,y.value,z.value)
         router.addRoute(route)
         #print x.value, y.value, z.value, n.value
-        table.append((x.value, y.value, z.value, n.value))
+        tipus = ''
+        if(n.value == '1'):
+            tipus = 'Other'
+        elif(n.value == '2'):
+            tipus = 'Reject'
+        elif(n.value == '3'):
+            tipus = 'Local'
+        elif(n.value == '4'):
+            tipus = 'Remote'
+
+        table.append((x.value, y.value, z.value, tipus))
 
     print 'RoutingTable: '
     headers = ["Network", "Mask", "Nexthop", "Type"]
