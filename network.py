@@ -2,8 +2,8 @@ from router import Router
 from interface import Interface
 
 
+#CLASSE QUE REPRESENTA LA XARXA EN SI I GESTIONA ELS ROUTERS I QUALSEVOL OPERACIO ENTRE ELLS
 class Network():
-
     def __init__(self):
         self.routers = list()
         self.allIPs = list()
@@ -33,6 +33,7 @@ class Network():
     def getIPs(self):
         return self.allIPs
 
+    #AFEGIR UNA IP AL REGISTRE EN CAS QUE NO HI EXISTEIXI
     def addIP(self,ip,mask, router):
         for x in self.allIPs:
             if x[0] == ip and x[1] == mask and x[2] == router:
@@ -40,6 +41,7 @@ class Network():
         value=[ip,mask,router]
         self.allIPs.append(value)
 
+    #RETORNEM NOM DEL ROUTER A PARTIR D'UNA IP DONADA
     def getRouterbyIP(self,ip):
         for x in self.allIPs:
             if x[0] == ip:

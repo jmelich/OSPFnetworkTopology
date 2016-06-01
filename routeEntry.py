@@ -1,4 +1,4 @@
-
+#CLASSE QUE REPRESENTA CADA UNA DE LES ENTRADES D' UNA TAULA D' ENRUTAMENT
 class RouteEntry():
     def __init__(self,network,mask,nexthop):
         self.network = network

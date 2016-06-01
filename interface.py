@@ -1,3 +1,4 @@
+#CLASSE QUE REPRESENTA ELS OBJECTES INTERFICIE 
 class Interface:
 
     def __init__(self, name, ipAddress, netmask, speed, cost):  # falta el cost
@@ -18,5 +19,6 @@ class Interface:
 
     def getMask(self):
         return self.netmask
+
     def getSpeed(self):
         return self.speed
