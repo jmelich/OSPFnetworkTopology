@@ -18,3 +18,5 @@ class Interface:
 
     def getMask(self):
         return self.netmask
+    def getSpeed(self):
+        return self.speed

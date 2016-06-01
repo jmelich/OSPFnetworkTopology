@@ -62,21 +62,23 @@ def getRouterInterfaces(ipRouter, routerName=None):
         ifaceIndex = (session.get('RFC1213-MIB::ipAdEntIfIndex.'+ip.value))
         ifaceName = (session.get('IF-MIB::ifDescr.'+ ifaceIndex.value))
         ifaceMask = (session.get('ipAdEntNetMask.'+ ip.value))
-        ifaceSpeed = (session.get('ifSpeed.'+ifaceIndex.value))
+        ifaceSpeed = (session.get('ifSpeed.'+ifaceIndex.value))   #en bits per second
         ifaceCost = (session.get('OSPF-MIB::ospfIfMetricValue.'+ip.value+'.0.0')).value
+
+        speed = int(ifaceSpeed.value)/1000000
 
         if ifaceCost == 'NOSUCHINSTANCE':
             ifaceCost = 'N/D'
 
         #print ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost
-        table.append((ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost))
+        table.append((ifaceName.value, ip.value, ifaceMask.value, speed, ifaceCost))
 
-        interface = Interface(ifaceName.value, ip.value, ifaceMask.value, ifaceSpeed.value, ifaceCost)  # falta el cost
+        interface = Interface(ifaceName.value, ip.value, ifaceMask.value, speed, ifaceCost)  # falta el cost
         router.addInterface(interface)
         network.addIP(ip.value, routerName, ifaceMask.value)
 
     print "Interfaces: "
-    headers = ["Name", "IP", "Mask", "Speed", "Cost"]
+    headers = ["Name", "IP", "Mask", "Speed(Mbps)", "Cost"]
     print tabulate(table, headers, tablefmt="fancy_grid")
     getRoutingTable(ipRouter,router)
 
@@ -135,11 +137,13 @@ def ipsSameNetwork(r1, r2):
     for x in r1.getInterfaces():
         ip1 = str(x.getIP())
         mask1 = str(x.getMask())
+        speed1 = str(x.getSpeed())
         for y in r2.getInterfaces():
             ip2 = str(y.getIP())
             mask2 = str(y.getMask())
+            speed2 = str(y.getSpeed())
             if IPNetwork(str(ip1 + '/' + mask1)) == IPNetwork(str(ip2 + '/' + mask2)):
-                return (ip1, ip2)
+                return ((ip1+ "\n"+ speed1+"Mbps"), (ip2+ "\n" + speed2 + "Mbps"))
 
 def findBestRoutes():
 
