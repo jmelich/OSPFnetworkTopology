@@ -1,6 +1,5 @@
-#CLASSE QUE REPRESENTA ELS OBJECTES INTERFICIE 
+# CLASSE QUE REPRESENTA ELS OBJECTES INTERFICIE
 class Interface:
-
     def __init__(self, name, ipAddress, netmask, speed, cost):  # falta el cost
         self.name = name
         self.ipAddress = ipAddress
