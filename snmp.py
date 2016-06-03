@@ -60,8 +60,8 @@ def getRouterInterfaces(ipRouter, routerName=None):
     for ip in ifaceIp:
         ifaceIndex = (session.get('RFC1213-MIB::ipAdEntIfIndex.'+ip.value))                 #recuperem l' index que ocupa
         ifaceName = (session.get('IF-MIB::ifDescr.'+ ifaceIndex.value))                     #a partir de l'index recuperem el nom de la
-        ifaceMask = (session.get('ipAdEntNetMask.'+ ip.value))                              #recuperem mascara a partir de la ip
-        ifaceSpeed = (session.get('ifSpeed.'+ifaceIndex.value))   #en bits per second       #recuperem velocitat a partir de l'index
+        ifaceMask = (session.get('RFC1213-MIB::ipAdEntNetMask.'+ ip.value))                              #recuperem mascara a partir de la ip
+        ifaceSpeed = (session.get('IF-MIB::ifSpeed.'+ifaceIndex.value))   #en bits per second       #recuperem velocitat a partir de l'index
         ifaceCost = (session.get('OSPF-MIB::ospfIfMetricValue.'+ip.value+'.0.0')).value     #recuperem el cost a partir de la ip
 
         speed = int(ifaceSpeed.value)/1000000                                               #calculem velocitat en Mbps
