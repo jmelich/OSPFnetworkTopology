@@ -27,6 +27,7 @@ The program output is:
 </p>
 
 
-LAUNCH:
-python snmp.py <IP> <COMMUNITY> <graph file name>
+LAUNCH: python snmp.py IP COMMUNITY graph file name
+
+
 
