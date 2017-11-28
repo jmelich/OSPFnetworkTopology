@@ -26,3 +26,7 @@ The program output is:
   <img src="https://preview.ibb.co/byeQq6/network_topology.png" width="350"/>
 </p>
 
+
+LAUNCH:
+python snmp.py <IP> <COMMUNITY> <graph file name>
+
